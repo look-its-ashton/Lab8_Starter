@@ -23,22 +23,24 @@ describe('Basic user flow for Website', () => {
     let data, plainValue;
     // Query select all of the <product-item> elements
     const prodItems = await page.$$('product-item');
-    console.log(`Checking product item 1/${prodItems.length}`);
-    // Grab the .data property of <product-items> to grab all of the json data stored inside
-    data = await prodItems[0].getProperty('data');
-    // Convert that property to JSON
-    plainValue = await data.jsonValue();
-    // Make sure the title, price, and image are populated in the JSON
-    if (plainValue.title.length == 0) { allArePopulated = false; }
-    if (plainValue.price.length == 0) { allArePopulated = false; }
-    if (plainValue.image.length == 0) { allArePopulated = false; }
-    // Expect allArePopulated to still be true
-    expect(allArePopulated).toBe(true);
+    for (let i = 0; i < 20; i++)
+    {
+      console.log(`Checking product item ${i + 1}/${prodItems.length}`);
+      // Grab the .data property of <product-items> to grab all of the json data stored inside
+      data = await prodItems[i].getProperty('data');
+      // Convert that property to JSON
+      plainValue = await data.jsonValue();
+      // Make sure the title, price, and image are populated in the JSON
+      if (plainValue.title.length == 0) { allArePopulated = false; }
+      if (plainValue.price.length == 0) { allArePopulated = false; }
+      if (plainValue.image.length == 0) { allArePopulated = false; }
+      // Expect allArePopulated to still be true
+      expect(allArePopulated).toBe(true);
 
-    // TODO - Step 1
-    // Right now this function is only checking the first <product-item> it found, make it so that
-    // it checks every <product-item> it found
-
+      // TODO - Step 1
+      // Right now this function is only checking the first <product-item> it found, make it so that
+      // it checks every <product-item> it found
+    }
   }, 10000);
 
   // Check to make sure that when you click "Add to Cart" on the first <product-item> that
@@ -47,9 +49,16 @@ describe('Basic user flow for Website', () => {
     console.log('Checking the "Add to Cart" button...');
     // TODO - Step 2
     // Query a <product-item> element using puppeteer ( checkout page.$() and page.$$() in the docs )
+    const pi = await page.$('product-item');
+    const po = await pi.getProperty('shadowRoot');
     // Grab the shadowRoot of that element (it's a property), then query a button from that shadowRoot.
+    const btn = await po.$('button');
     // Once you have the button, you can click it and check the innerText property of the button.
+    await btn.click();
+    let itxt = await btn.getProperty('innerText');
     // Once you have the innerText property, use innerText.jsonValue() to get the text value of it
+    let jtxt = await itxt.jsonValue();
+    expect(jtxt).toBe('Remove from Cart');
   }, 2500);
 
   // Check to make sure that after clicking "Add to Cart" on every <product-item> that the Cart
@@ -58,9 +67,22 @@ describe('Basic user flow for Website', () => {
     console.log('Checking number of items in cart on screen...');
     // TODO - Step 3
     // Query select all of the <product-item> elements, then for every single product element
+    const prodItems = await page.$$('product-item');
+    let curr, po, btn;
+    for (let i = 1; i < 20; i++)
+    {
+      curr = prodItems[i];
+      po = await curr.getProperty('shadowRoot');
+      btn = await po.$('button');
+      await btn.click();
+    }
+    const cnt = await page.$('#cart-count');
+    const icnt = await cnt.getProperty('innerText');
+    const jicnt = await icnt.jsonValue();
+    expect(jicnt).toBe("20");
     // get the shadowRoot and query select the button inside, and click on it.
     // Check to see if the innerText of #cart-count is 20
-  }, 10000);
+  }, 20000);
 
   // Check to make sure that after you reload the page it remembers all of the items in your cart
   it('Checking number of items in cart on screen after reload', async () => {
@@ -69,6 +91,32 @@ describe('Basic user flow for Website', () => {
     // Reload the page, then select all of the <product-item> elements, and check every
     // element to make sure that all of their buttons say "Remove from Cart".
     // Also check to make sure that #cart-count is still 20
+
+    const navigationPromise = page.waitForNavigation({ waitUntil: ['load', 'networkidle2'] });
+    await page.reload();
+    await navigationPromise;
+
+    const prodItems = await page.$$('product-item');
+    let curr, po, btn;
+    let stillGood = "true";
+    for (let i = 0; i < 20; i++)
+    {
+      curr = prodItems[i];
+      po = await curr.getProperty('shadowRoot');
+      btn = await po.$('button');
+      btn = await btn.getProperty('innerText');
+      btn = await btn.jsonValue();
+      console.log(btn);
+      if (btn != "Remove from Cart")
+        stillGood = "false";
+    }
+
+    expect(stillGood).toBe("true");
+
+    const cnt = await page.$('#cart-count');
+    const icnt = await cnt.getProperty('innerText');
+    const jicnt = await icnt.jsonValue();
+    expect(jicnt).toBe("20");
   }, 10000);
 
   // Check to make sure that the cart in localStorage is what you expect
