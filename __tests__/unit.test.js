@@ -31,7 +31,7 @@ test('test email without \".\"', () => {
 });
 
 test('tests short strong password', () => {
-    expect(functions.isEmail("asdAe*rerfj")).toBe(true);
+    expect(functions.isEmail("a2*_34324347")).toBe(true);
 });
 test('tests long strong password', () => {
     expect(functions.isEmail("A34_bA34_bA34_b")).toBe(true);
@@ -41,4 +41,30 @@ test('tests password with disallowed characters', () => {
 });
 test('test password with number first', () => {
     expect(functions.isEmail("2A34_bA34_bA")).toBe(false);
+});
+
+test('test correct date', () => {
+    expect(functions.isEmail("3 / 3 / 2009")).toBe(true);
+});
+test('test 2-digit days and months', () => {
+    expect(functions.isEmail("12/10/2010")).toBe(true);
+});
+test('tests date without slashes', () => {
+    expect(functions.isEmail("3  3  2009")).toBe(false);
+});
+test('test date with 4-digit numbers', () => {
+    expect(functions.isEmail("2345 / 3421 / 9999")).toBe(false);
+});
+
+test('test single character hex color', () => {
+    expect(functions.isEmail("FFFFFF")).toBe(true);
+});
+test('test random hex color', () => {
+    expect(functions.isEmail("3D5C3A")).toBe(true);
+});
+test('tests hex color with too few characters', () => {
+    expect(functions.isEmail("3D2AA")).toBe(false);
+});
+test('test date hex color with too many characters', () => {
+    expect(functions.isEmail("AB46243")).toBe(false);
 });
