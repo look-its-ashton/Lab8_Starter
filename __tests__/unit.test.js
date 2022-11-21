@@ -31,40 +31,40 @@ test('test email without \".\"', () => {
 });
 
 test('tests short strong password', () => {
-    expect(functions.isEmail("a2*_34324347")).toBe(true);
+    expect(functions.isStrongPassword("a2_34324347")).toBe(true);
 });
 test('tests long strong password', () => {
-    expect(functions.isEmail("A34_bA34_bA34_b")).toBe(true);
+    expect(functions.isStrongPassword("A34_bA34_bA34_b")).toBe(true);
 });
 test('tests password with disallowed characters', () => {
-    expect(functions.isEmail("A34_[]|||")).toBe(false);
+    expect(functions.isStrongPassword("A34_[]|||")).toBe(false);
 });
 test('test password with number first', () => {
-    expect(functions.isEmail("2A34_bA34_bA")).toBe(false);
+    expect(functions.isStrongPassword("2A34_bA34_bA")).toBe(false);
 });
 
-test('test correct date', () => {
-    expect(functions.isEmail("3 / 3 / 2009")).toBe(true);
+test('test correct date single digits', () => {
+    expect(functions.isDate("3/3/2009")).toBe(true);
 });
 test('test 2-digit days and months', () => {
-    expect(functions.isEmail("12/10/2010")).toBe(true);
+    expect(functions.isDate("12/10/2010")).toBe(true);
 });
 test('tests date without slashes', () => {
-    expect(functions.isEmail("3  3  2009")).toBe(false);
+    expect(functions.isDate("3  3  2009")).toBe(false);
 });
 test('test date with 4-digit numbers', () => {
-    expect(functions.isEmail("2345 / 3421 / 9999")).toBe(false);
+    expect(functions.isDate("2345 / 3421 / 9999")).toBe(false);
 });
 
 test('test single character hex color', () => {
-    expect(functions.isEmail("FFFFFF")).toBe(true);
+    expect(functions.isHexColor("FFFFFF")).toBe(true);
 });
 test('test random hex color', () => {
-    expect(functions.isEmail("3D5C3A")).toBe(true);
+    expect(functions.isHexColor("3D5C3A")).toBe(true);
 });
 test('tests hex color with too few characters', () => {
-    expect(functions.isEmail("3D2AA")).toBe(false);
+    expect(functions.isHexColor("3D2AA")).toBe(false);
 });
 test('test date hex color with too many characters', () => {
-    expect(functions.isEmail("AB46243")).toBe(false);
+    expect(functions.isHexColor("AB46243")).toBe(false);
 });
