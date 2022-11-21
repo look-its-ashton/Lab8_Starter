@@ -1,7 +1,7 @@
 # Lab 8 - Starter
 
-George Dubinin
-Daniel Hernandez
+<b>George Dubinin</b><br>
+<b>Daniel Hernandez</b>
 
 ## 1.
 Answer: 1. Within a Github action that runs whenever code is pushed
