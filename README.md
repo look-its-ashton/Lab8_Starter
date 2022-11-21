@@ -1,4 +1,8 @@
 # Lab 8 - Starter
+
+George Dubinin
+Daniel Hernandez
+
 ## 1.
 Answer: 1. Within a Github action that runs whenever code is pushed
 Reason: Because then bugs can be discovered early on in development and human error is eliminated if these tests are run automatically (as an action).
